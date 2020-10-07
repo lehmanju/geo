@@ -7,19 +7,19 @@ use crate::*;
 
 impl<T> Contains<Coordinate<T>> for Geometry<T>
 where
-    T: GeoNum,
+    T: GeoFloat,
 {
-    geometry_delegate_impl! {
-        fn contains(&self, coord: &Coordinate<T>) -> bool;
+    fn contains(&self, coord: &Coordinate<T>) -> bool {
+        self.contains(&Point::from(*coord))
     }
 }
 
 impl<T> Contains<Point<T>> for Geometry<T>
 where
-    T: GeoNum,
+    T: GeoFloat,
 {
-    fn contains(&self, point: &Point<T>) -> bool {
-        self.contains(&point.0)
+    geometry_delegate_impl! {
+        fn contains(&self, point: &Point<T>) -> bool;
     }
 }
 
@@ -29,7 +29,7 @@ where
 
 impl<T> Contains<Coordinate<T>> for GeometryCollection<T>
 where
-    T: GeoNum,
+    T: GeoFloat,
 {
     fn contains(&self, coord: &Coordinate<T>) -> bool {
         self.iter().any(|geometry| geometry.contains(coord))
@@ -38,7 +38,7 @@ where
 
 impl<T> Contains<Point<T>> for GeometryCollection<T>
 where
-    T: GeoNum,
+    T: GeoFloat,
 {
     fn contains(&self, point: &Point<T>) -> bool {
         self.contains(&point.0)
