@@ -6,21 +6,11 @@ use crate::intersects::Intersects;
 use crate::num_traits::Zero;
 use crate::{Coordinate, GeoFloat, Line, Rect};
 
-// JTS: /**
-// JTS:  * A robust version of {@link LineIntersector}.
-// JTS:  *
-// JTS:  * @version 1.7
-// JTS:  */
-// JTS: public class RobustLineIntersector
-// JTS:     extends LineIntersector
-// JTS: {
 /// A robust version of [LineIntersector](traits.LineIntersector).
 #[derive(Clone)]
 pub(crate) struct RobustLineIntersector;
 
 impl RobustLineIntersector {
-    // JTS:   public RobustLineIntersector() {
-    // JTS:   }
     pub fn new() -> RobustLineIntersector {
         RobustLineIntersector
     }
@@ -50,44 +40,18 @@ impl RobustLineIntersector {
     /// result of _rounding_ points which lie on the line,
     /// but not safe to use for _truncated_ points.
     pub fn compute_edge_distance<F: GeoFloat>(intersection: Coordinate<F>, line: Line<F>) -> F {
-        // JTS:     double dx = Math.abs(p1.x - p0.x);
-        // JTS:     double dy = Math.abs(p1.y - p0.y);
         let dx = (line.end.x - line.start.x).abs();
         let dy = (line.end.y - line.start.y).abs();
 
-        // JTS:     double dist = -1.0;   // sentinel value
         let mut dist: F;
-        // JTS:     if (p.equals(p0)) {
-        // JTS:       dist = 0.0;
-        // JTS:     }
         if intersection == line.start {
             dist = F::zero();
-            // JTS:     else if (p.equals(p1)) {
-            // JTS:       if (dx > dy)
-            // JTS:         dist = dx;
-            // JTS:       else
-            // JTS:         dist = dy;
-            // JTS:     }
         } else if intersection == line.end {
             if dx > dy {
                 dist = dx;
             } else {
                 dist = dy;
             }
-            // JTS:     else {
-            // JTS:       double pdx = Math.abs(p.x - p0.x);
-            // JTS:       double pdy = Math.abs(p.y - p0.y);
-            // JTS:       if (dx > dy)
-            // JTS:         dist = pdx;
-            // JTS:       else
-            // JTS:         dist = pdy;
-            // JTS:       // <FIX>
-            // JTS:       // hack to ensure that non-endpoints always have a non-zero distance
-            // JTS:       if (dist == 0.0 && ! p.equals(p0))
-            // JTS:       {
-            // JTS:         dist = Math.max(pdx, pdy);
-            // JTS:       }
-            // JTS:     }
         } else {
             let intersection_dx = (intersection.x - line.start.x).abs();
             let intersection_dy = (intersection.y - line.start.y).abs();
@@ -101,13 +65,10 @@ impl RobustLineIntersector {
                 dist = intersection_dx.max(intersection_dy);
             }
         }
-        // JTS:     Assert.isTrue(! (dist == 0.0 && ! p.equals(p0)), "Bad distance calculation");
-        // JTS:     return dist;
         debug_assert!(
             !(dist == F::zero() && intersection != line.start),
             "Bad distance calculation"
         );
         dist
-        // JTS:   }
     }
 }
