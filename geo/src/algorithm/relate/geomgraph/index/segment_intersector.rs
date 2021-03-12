@@ -94,6 +94,7 @@ where
 
         false
     }
+
     pub fn add_intersections(
         &mut self,
         edge0: &RefCell<Edge<F>>,
@@ -170,8 +171,5 @@ where
                 .any(|node| intersection == node.coordinate()),
             None => false,
         }
-
-        // is_boundary(intersection, &boundary_nodes[0])
-        //     || self.is_boundary_point_internal(intersection, &boundary_nodes[1])
     }
 }

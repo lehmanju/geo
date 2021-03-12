@@ -101,9 +101,10 @@ impl<F: GeoFloat> Edge<F> {
         }
     }
 
-    /// Add an EdgeIntersection for intersection intIndex.
+    /// Add an EdgeIntersection for `intersection`.
+    ///
     /// An intersection that falls exactly on a vertex of the edge is normalized to use the higher
-    /// of the two possible segmentIndexes
+    /// of the two possible `segment_index`
     pub fn add_intersection(
         &mut self,
         intersection_coord: Coordinate<F>,
@@ -128,20 +129,24 @@ impl<F: GeoFloat> Edge<F> {
             distance,
         ));
     }
+
+    /// Update the IM with the contribution for this component.
+    ///
+    /// A component only contributes if it has a labelling for both parent geometries
     pub fn update_intersection_matrix(label: &Label, intersection_matrix: &mut IntersectionMatrix) {
-        intersection_matrix.set_at_least_if_valid(
+        intersection_matrix.set_at_least_if_in_both(
             label.position(0, Direction::On),
             label.position(1, Direction::On),
             Dimensions::OneDimensional,
         );
 
         if label.is_area() {
-            intersection_matrix.set_at_least_if_valid(
+            intersection_matrix.set_at_least_if_in_both(
                 label.position(0, Direction::Left),
                 label.position(1, Direction::Left),
                 Dimensions::TwoDimensional,
             );
-            intersection_matrix.set_at_least_if_valid(
+            intersection_matrix.set_at_least_if_in_both(
                 label.position(0, Direction::Right),
                 label.position(1, Direction::Right),
                 Dimensions::TwoDimensional,

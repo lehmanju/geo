@@ -265,7 +265,7 @@ where
     /// intersection tests.  (E.g. rings are not tested for self-intersection, since they are
     /// assumed to be valid).
     ///
-    /// `li` the [`LineIntersector`] to use to determine intersection
+    /// `line_intersector` the [`LineIntersector`] to use to determine intersection
     pub fn compute_self_nodes(
         &mut self,
         line_intersector: Box<dyn LineIntersector<F>>,
@@ -341,6 +341,7 @@ where
         let new_position = Self::determine_boundary(boundary_count);
         label.set_on_position(arg_index, new_position);
     }
+
     fn add_self_intersection_nodes(&mut self) {
         let positions_and_intersections: Vec<(CoordPos, Vec<Coordinate<F>>)> = self
             .edges()

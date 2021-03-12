@@ -20,18 +20,13 @@ impl Quadrant {
         if dx.is_zero() && dy.is_zero() {
             return None;
         }
-        if dx >= F::zero() {
-            if dy >= F::zero() {
-                Some(Quadrant::NE)
-            } else {
-                Some(Quadrant::SE)
-            }
-        } else {
-            if dy >= F::zero() {
-                Some(Quadrant::NW)
-            } else {
-                Some(Quadrant::SW)
-            }
+
+        match (dy >= F::zero(), dx >= F::zero()) {
+            (true, true) => Quadrant::NE,
+            (true, false) => Quadrant::NW,
+            (false, false) => Quadrant::SW,
+            (false, true) => Quadrant::SE,
         }
+        .into()
     }
 }

@@ -2,18 +2,17 @@ use super::{CoordPos, Direction, TopologyPosition};
 
 use std::fmt;
 
-/// A `Label` indicates the topological relationship of a node or edge of a topology graph to a given
-/// [`Geometry`].
+/// A GeometryGraph has components (nodes and edges) which are labeled with their topological
+/// relations to the geometries.
 ///
-/// Topology graphs support the concept of labeling nodes and edges in the graph.  The label of a
-/// node or edge specifies its topological relationship to one or more geometries.  A label
-/// for a node or edge has one or two elements, depending on whether the node or edge occurs in one
-/// or both of the input `Geometry`s.
+/// More precisely, each `Label` holds a `TopologyPosition` for each geometry that states whether
+/// the node or edge being labeled occurs `Inside`, `Outside`, or `OnBoundary` of the geometry.
 ///
-/// Elements contain attributes which categorize the topological
-/// location of the node or edge relative to the parent `Geometry`; that is, whether the node or
-/// edge is in the interior, boundary or exterior of the `Geometry`.  Attributes have a value
-/// from the set `{Inside, OnBoundary, Outside}`.
+/// For lines and points, a `TopologyPosition` tracks only an `On` position,
+/// while areas have positions for `On`, `Left`, and `Right`.
+///
+/// If the component has *no* incidence with one of the geometries, than the `Label`'s
+/// `TopologyPosition` for that geometry is called `empty`.
 #[derive(Clone)]
 pub(crate) struct Label {
     geometry_topologies: [TopologyPosition; 2],

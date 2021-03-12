@@ -52,14 +52,13 @@ where
         };
         self.label.set_on_position(geom_index, new_position);
     }
-}
 
-impl<F: GeoFloat> CoordNode<F> {
-    // from JTS#GraphComponent - seems like only node uses this impl, so implementing it directly
-    // onto node rather than the GraphComponent trait
+    // In JTS this method is implemented on a `GraphComponent` superclass, but since it's only used
+    // by this one "subclass" I've implemented it directly on the node, rather than introducing
+    // something like a `GraphComponent` trait
     pub fn update_intersection_matrix(&self, intersection_matrix: &mut IntersectionMatrix) {
         assert!(self.label.geometry_count() >= 2, "found partial label");
-        intersection_matrix.set_at_least_if_valid(
+        intersection_matrix.set_at_least_if_in_both(
             self.label.on_position(0),
             self.label.on_position(1),
             Dimensions::ZeroDimensional,
@@ -69,6 +68,4 @@ impl<F: GeoFloat> CoordNode<F> {
             intersection_matrix, self
         );
     }
-
-    // from JTS#RelateNode, which we've squashed into the base Node class to avoid wrestling OO hierarchies into rust.
 }

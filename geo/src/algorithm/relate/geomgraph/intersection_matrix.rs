@@ -24,8 +24,16 @@ use crate::algorithm::dimensions::Dimensions;
 #[derive(PartialEq, Eq)]
 pub struct IntersectionMatrix(LocationArray<LocationArray<Dimensions>>);
 
+/// Helper struct so we can index IntersectionMatrix by CoordPos
+///
+/// CoordPos enum members are ordered: OnBondary, Inside, Outside
+/// DE-9IM matrices are ordered: Inside, Boundary, Exterior
+///
+/// So we can't simply `CoordPos as usize` without losing the conventional ordering
+/// of elements, which is useful for debug / interop.
 #[derive(PartialEq, Eq, Clone, Copy)]
 struct LocationArray<T>([T; 3]);
+
 impl<T> LocationArray<T> {
     fn iter(&self) -> impl Iterator<Item = &T> {
         self.0.iter()
@@ -55,18 +63,18 @@ impl<T> std::ops::IndexMut<CoordPos> for LocationArray<T> {
 }
 
 #[derive(Debug)]
-pub struct InvalidInput {
+pub struct InvalidInputError {
     message: String,
 }
 
-impl InvalidInput {
+impl InvalidInputError {
     fn new(message: String) -> Self {
         Self { message }
     }
 }
 
-impl std::error::Error for InvalidInput {}
-impl std::fmt::Display for InvalidInput {
+impl std::error::Error for InvalidInputError {}
+impl std::fmt::Display for InvalidInputError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "invalid input:  {}", self.message)
     }
@@ -98,46 +106,65 @@ impl IntersectionMatrix {
         IntersectionMatrix(LocationArray([LocationArray([Dimensions::Empty; 3]); 3]))
     }
 
+    /// Set `dimensions` of the cell specified by the positions.
+    ///
+    /// `position_a`: which position `dimensions` applies to within the first geometry
+    /// `position_b`: which position `dimensions` applies to within the second geometry
+    /// `dimensions`: the dimension of the incident
     pub(crate) fn set(
         &mut self,
         position_a: CoordPos,
         position_b: CoordPos,
-        dimensionality: Dimensions,
+        dimensions: Dimensions,
     ) {
-        self.0[position_a][position_b] = dimensionality;
+        self.0[position_a][position_b] = dimensions;
     }
 
+    /// Reports an incident of `dimensions`, which updates the IntersectionMatrix if it's greater
+    /// than what has been reported so far.
+    ///
+    /// `position_a`: which position `minimum_dimensions` applies to within the first geometry
+    /// `position_b`: which position `minimum_dimensions` applies to within the second geometry
+    /// `minimum_dimensions`: the dimension of the incident
     pub(crate) fn set_at_least(
         &mut self,
         position_a: CoordPos,
         position_b: CoordPos,
-        minimum_dimension_value: Dimensions,
+        minimum_dimensions: Dimensions,
     ) {
-        if self.0[position_a][position_b] < minimum_dimension_value {
-            self.0[position_a][position_b] = minimum_dimension_value;
+        if self.0[position_a][position_b] < minimum_dimensions {
+            self.0[position_a][position_b] = minimum_dimensions;
         }
     }
 
-    pub(crate) fn set_at_least_if_valid(
+    /// If both geometries have `Some` position, then changes the specified element to at
+    /// least `minimum_dimensions`.
+    ///
+    /// Else, if either is none, do nothing.
+    ///
+    /// `position_a`: which position `minimum_dimensions` applies to within the first geometry, or
+    ///               `None` if the dimension was not incident with the first geometry.
+    /// `position_b`: which position `minimum_dimensions` applies to within the second geometry, or
+    ///               `None` if the dimension was not incident with the second geometry.
+    /// `minimum_dimensions`: the dimension of the incident
+    pub(crate) fn set_at_least_if_in_both(
         &mut self,
         position_a: Option<CoordPos>,
         position_b: Option<CoordPos>,
-        minimum_dimension_value: Dimensions,
+        minimum_dimensions: Dimensions,
     ) {
-        if let Some(position_a) = position_a {
-            if let Some(position_b) = position_b {
-                self.set_at_least(position_a, position_b, minimum_dimension_value);
-            }
+        if let (Some(position_a), Some(position_b)) = (position_a, position_b) {
+            self.set_at_least(position_a, position_b, minimum_dimensions);
         }
     }
 
     pub(crate) fn set_at_least_from_string(
         &mut self,
         dimensions: &str,
-    ) -> Result<(), InvalidInput> {
+    ) -> Result<(), InvalidInputError> {
         if dimensions.len() != 9 {
             let message = format!("Expected dimensions length 9, found: {}", dimensions.len());
-            return Err(InvalidInput::new(message));
+            return Err(InvalidInputError::new(message));
         }
 
         let mut chars = dimensions.chars();
@@ -151,7 +178,7 @@ impl IntersectionMatrix {
                     other => {
                         let message = format!("expected '0', '1', '2', or 'F'. Found: {}", other);
                         // We should make this return Err if this method becomes public
-                        return Err(InvalidInput::new(message));
+                        return Err(InvalidInputError::new(message));
                     }
                 }
             }
@@ -197,7 +224,7 @@ impl IntersectionMatrix {
 }
 
 impl std::str::FromStr for IntersectionMatrix {
-    type Err = InvalidInput;
+    type Err = InvalidInputError;
     fn from_str(str: &str) -> Result<Self, Self::Err> {
         let mut im = IntersectionMatrix::empty();
         im.set_at_least_from_string(str)?;
