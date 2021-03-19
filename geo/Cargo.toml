@@ -33,7 +33,7 @@ proj-network = ["use-proj", "proj/network"]
 use-serde = ["serde", "geo-types/serde"]
 
 [dev-dependencies]
-pretty_env_logger = "*"
+pretty_env_logger = "0.4"
 approx = "0.4.0"
 criterion = { version = "0.3" }
 # jts-test-runner is an internal crate which exists only to be part of the geo test suite.
