@@ -2,11 +2,13 @@ use crate::GeoNum;
 
 /// Utility functions for working with quadrants of the cartesian plane,
 /// which are labeled as follows:
+/// ```ignore
 ///          (+)
 ///        NW ┃ NE
 ///    (-) ━━━╋━━━━ (+)
 ///        SW ┃ SE
 ///          (-)
+/// ```
 #[derive(Debug, Clone, Copy, PartialOrd, PartialEq)]
 pub enum Quadrant {
     NE,
