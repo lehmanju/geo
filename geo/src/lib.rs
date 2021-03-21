@@ -177,7 +177,7 @@ extern crate rstar;
 pub use crate::algorithm::*;
 #[allow(deprecated)]
 pub use crate::traits::ToGeo;
-pub use crate::types::*;
+pub use crate::types::Closest;
 
 pub use geo_types::{
     line_string, point, polygon, CoordFloat, CoordNum, Coordinate, Geometry, GeometryCollection,

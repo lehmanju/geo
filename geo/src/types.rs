@@ -39,9 +39,8 @@ impl<F: GeoFloat> Closest<F> {
 
 /// Implements the common pattern where a Geometry enum simply delegates its trait impl to it's inner type.
 ///
-/// e.g.
-/// ```ignore
-/// # use geo::{GeoNum, Polygon, Point, Coordinate, Line, Rect, Triangle, LineString, Geometry, MultiLineString, MultiPoint, MultiPolygon, GeometryCollection};
+/// ```
+/// # use geo::{GeoNum, Coordinate, Point, Line, LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon, GeometryCollection, Rect, Triangle, Geometry};
 ///
 /// trait Foo<T: GeoNum> {
 ///     fn foo_1(&self, coord: Coordinate<T>)  -> bool;
@@ -51,13 +50,44 @@ impl<F: GeoFloat> Closest<F> {
 /// // Assuming we have an impl for all the inner types like this:
 /// impl<T: GeoNum> Foo<T> for Point<T> {
 ///     fn foo_1(&self, coord: Coordinate<T>)  -> bool { true }
-///     fn foo_2(&self)  -> i32 { 3 }
+///     fn foo_2(&self)  -> i32 { 1 }
+/// }
+/// impl<T: GeoNum> Foo<T> for Line<T> {
+///     fn foo_1(&self, coord: Coordinate<T>)  -> bool { false }
+///     fn foo_2(&self)  -> i32 { 2 }
 /// }
 /// impl<T: GeoNum> Foo<T> for LineString<T> {
 ///     fn foo_1(&self, coord: Coordinate<T>)  -> bool { true }
+///     fn foo_2(&self)  -> i32 { 3 }
+/// }
+/// impl<T: GeoNum> Foo<T> for Polygon<T> {
+///     fn foo_1(&self, coord: Coordinate<T>)  -> bool { false }
+///     fn foo_2(&self)  -> i32 { 4 }
+/// }
+/// impl<T: GeoNum> Foo<T> for MultiPoint<T> {
+///     fn foo_1(&self, coord: Coordinate<T>)  -> bool { true }
+///     fn foo_2(&self)  -> i32 { 5 }
+/// }
+/// impl<T: GeoNum> Foo<T> for MultiLineString<T> {
+///     fn foo_1(&self, coord: Coordinate<T>)  -> bool { false }
+///     fn foo_2(&self)  -> i32 { 6 }
+/// }
+/// impl<T: GeoNum> Foo<T> for MultiPolygon<T> {
+///     fn foo_1(&self, coord: Coordinate<T>)  -> bool { true }
+///     fn foo_2(&self)  -> i32 { 7 }
+/// }
+/// impl<T: GeoNum> Foo<T> for GeometryCollection<T> {
+///     fn foo_1(&self, coord: Coordinate<T>)  -> bool { false }
+///     fn foo_2(&self)  -> i32 { 8 }
+/// }
+/// impl<T: GeoNum> Foo<T> for Rect<T> {
+///     fn foo_1(&self, coord: Coordinate<T>)  -> bool { true }
 ///     fn foo_2(&self)  -> i32 { 9 }
 /// }
-/// ... and so on
+/// impl<T: GeoNum> Foo<T> for Triangle<T> {
+///     fn foo_1(&self, coord: Coordinate<T>)  -> bool { true }
+///     fn foo_2(&self)  -> i32 { 10 }
+/// }
 ///
 /// // If we want the impl for Geometry to simply delegate to it's
 /// // inner case...
@@ -87,7 +117,19 @@ impl<F: GeoFloat> Closest<F> {
 /// }
 /// ```
 #[macro_export]
-macro_rules! geometry_delegate_impl_helper {
+macro_rules! geometry_delegate_impl {
+    ($($a:tt)*) => { $crate::__geometry_delegate_impl_helper!{ Geometry, $($a)* } }
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! geometry_cow_delegate_impl {
+    ($($a:tt)*) => { $crate::__geometry_delegate_impl_helper!{ GeometryCow, $($a)* } }
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __geometry_delegate_impl_helper {
     (
         $enum:ident,
         $(
@@ -113,14 +155,4 @@ macro_rules! geometry_delegate_impl_helper {
                 }
             )+
         };
-}
-
-#[macro_export]
-macro_rules! geometry_cow_delegate_impl {
-    ($($a:tt)*) => { crate::geometry_delegate_impl_helper!{ GeometryCow, $($a)* } }
-}
-
-#[macro_export]
-macro_rules! geometry_delegate_impl {
-    ($($a:tt)*) => { crate::geometry_delegate_impl_helper!{ Geometry, $($a)* } }
 }
