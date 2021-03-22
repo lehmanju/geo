@@ -160,7 +160,7 @@ where
             return;
         }
 
-        let mut coords: Vec<Coordinate<F>> = vec![];
+        let mut coords: Vec<Coordinate<F>> = Vec::with_capacity(linear_ring.0.len());
         // remove repeated coords
         for coord in &linear_ring.0 {
             if coords.last() != Some(coord) {
@@ -214,7 +214,7 @@ where
             return;
         }
 
-        let mut coords: Vec<Coordinate<F>> = vec![];
+        let mut coords: Vec<Coordinate<F>> = Vec::with_capacity(line_string.0.len());
         for coord in &line_string.0 {
             if coords.last() != Some(coord) {
                 coords.push(*coord)

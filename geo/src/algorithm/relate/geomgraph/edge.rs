@@ -28,8 +28,10 @@ impl<F: GeoFloat> Edge<F> {
     /// - `coords` a *non-empty* Vec of Coordinates
     /// - `label` an appropriately dimensioned topology label for the Edge. See [`TopologyPosition`]
     ///    for details
-    pub(crate) fn new(coords: Vec<Coordinate<F>>, label: Label) -> Edge<F> {
+    pub(crate) fn new(mut coords: Vec<Coordinate<F>>, label: Label) -> Edge<F> {
         assert!(!coords.is_empty(), "Can't add empty edge");
+        // Once set, `edge.coords` never changes length.
+        coords.shrink_to_fit();
         Edge {
             coords,
             label,
