@@ -177,7 +177,6 @@ impl IntersectionMatrix {
                     'F' => {}
                     other => {
                         let message = format!("expected '0', '1', '2', or 'F'. Found: {}", other);
-                        // We should make this return Err if this method becomes public
                         return Err(InvalidInputError::new(message));
                     }
                 }
