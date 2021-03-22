@@ -2,8 +2,8 @@ pub(crate) use edge_end_builder::EdgeEndBuilder;
 pub use geomgraph::intersection_matrix::IntersectionMatrix;
 
 use crate::{
-    GeoFloat, Geometry, GeometryCow, Line, LineString, MultiLineString, MultiPoint, MultiPolygon,
-    Point, Polygon, Rect, Triangle,
+    GeoFloat, Geometry, GeometryCollection, GeometryCow, Line, LineString, MultiLineString,
+    MultiPoint, MultiPolygon, Point, Polygon, Rect, Triangle,
 };
 
 mod edge_end_builder;
@@ -65,6 +65,9 @@ impl<F: GeoFloat> Relate<F, GeometryCow<'_, F>> for GeometryCow<'_, F> {
 }
 
 macro_rules! relate_impl {
+    ($k:ty, $t:ty) => {
+        relate_impl![($k, $t),];
+    };
     ($(($k:ty, $t:ty),)*) => {
         $(
             impl<F: GeoFloat> Relate<F, $t> for $k {
@@ -111,4 +114,5 @@ macro_rules! cartesian_pairs_helper {
 // Implement Relate for every combination of Geometry. Alternatively we could do something like
 // `impl Relate<Into<GeometryCow>> for Into<GeometryCow> { }`
 // but I don't know that we want to make GeometryCow public (yet?).
-cartesian_pairs!(relate_impl, [Geometry<F>, Point<F>, Line<F>, LineString<F>, Polygon<F>, MultiPoint<F>, MultiLineString<F>, MultiPolygon<F>, Rect<F>, Triangle<F>]);
+cartesian_pairs!(relate_impl, [Point<F>, Line<F>, LineString<F>, Polygon<F>, MultiPoint<F>, MultiLineString<F>, MultiPolygon<F>, Rect<F>, Triangle<F>, GeometryCollection<F>]);
+relate_impl!(Geometry<F>, Geometry<F>);
