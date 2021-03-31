@@ -2,7 +2,7 @@ pub(crate) use edge_end_builder::EdgeEndBuilder;
 pub use geomgraph::intersection_matrix::IntersectionMatrix;
 
 use crate::{
-    GeoFloat, Geometry, GeometryCollection, GeometryCow, Line, LineString, MultiLineString,
+    GeoNum, Geometry, GeometryCollection, GeometryCow, Line, LineString, MultiLineString,
     MultiPoint, MultiPolygon, Point, Polygon, Rect, Triangle,
 };
 
@@ -57,7 +57,7 @@ pub trait Relate<F, T> {
     fn relate(&self, other: &T) -> IntersectionMatrix;
 }
 
-impl<F: GeoFloat> Relate<F, GeometryCow<'_, F>> for GeometryCow<'_, F> {
+impl<F: GeoNum> Relate<F, GeometryCow<'_, F>> for GeometryCow<'_, F> {
     fn relate(&self, other: &GeometryCow<F>) -> IntersectionMatrix {
         let mut relate_computer = relate_operation::RelateOperation::new(self, other);
         relate_computer.compute_intersection_matrix()
@@ -70,7 +70,7 @@ macro_rules! relate_impl {
     };
     ($(($k:ty, $t:ty),)*) => {
         $(
-            impl<F: GeoFloat> Relate<F, $t> for $k {
+            impl<F: GeoNum> Relate<F, $t> for $k {
                 fn relate(&self, other: &$t) -> IntersectionMatrix {
                     GeometryCow::from(self).relate(&GeometryCow::from(other))
                 }

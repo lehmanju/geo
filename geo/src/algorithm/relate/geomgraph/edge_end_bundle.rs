@@ -1,5 +1,5 @@
 use super::{CoordPos, Direction, Edge, EdgeEnd, GeometryGraph, IntersectionMatrix, Label};
-use crate::{Coordinate, GeoFloat};
+use crate::{Coordinate, GeoNum};
 
 /// A collection of [`EdgeEnds`](EdgeEnd) which obey the following invariant:
 /// They originate at the same node and have the same direction.
@@ -8,7 +8,7 @@ use crate::{Coordinate, GeoFloat};
 #[derive(Clone, Debug)]
 pub(crate) struct EdgeEndBundle<F>
 where
-    F: GeoFloat,
+    F: GeoNum,
 {
     coordinate: Coordinate<F>,
     edge_ends: Vec<EdgeEnd<F>>,
@@ -16,7 +16,7 @@ where
 
 impl<F> EdgeEndBundle<F>
 where
-    F: GeoFloat,
+    F: GeoNum,
 {
     pub(crate) fn new(coordinate: Coordinate<F>) -> Self {
         Self {
@@ -163,7 +163,7 @@ where
 #[derive(Clone, Debug)]
 pub(crate) struct LabeledEdgeEndBundle<F>
 where
-    F: GeoFloat,
+    F: GeoNum,
 {
     label: Label,
     edge_end_bundle: EdgeEndBundle<F>,
@@ -171,7 +171,7 @@ where
 
 impl<F> LabeledEdgeEndBundle<F>
 where
-    F: GeoFloat,
+    F: GeoNum,
 {
     pub fn label(&self) -> &Label {
         &self.label

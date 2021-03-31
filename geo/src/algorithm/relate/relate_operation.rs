@@ -7,7 +7,7 @@ use crate::algorithm::relate::geomgraph::{
     CoordNode, CoordPos, Edge, EdgeEnd, EdgeEndBundleStar, GeometryGraph, LabeledEdgeEndBundleStar,
     RobustLineIntersector,
 };
-use crate::{Coordinate, GeoFloat, GeometryCow};
+use crate::{Coordinate, GeoNum, GeometryCow};
 
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -23,7 +23,7 @@ use std::rc::Rc;
 /// Based on [JTS's `RelateComputer` as of 1.18.1](https://github.com/locationtech/jts/blob/jts-1.18.1/modules/core/src/main/java/org/locationtech/jts/operation/relate/RelateComputer.java)
 pub(crate) struct RelateOperation<'a, F>
 where
-    F: GeoFloat,
+    F: GeoNum,
 {
     graph_a: GeometryGraph<'a, F>,
     graph_b: GeometryGraph<'a, F>,
@@ -35,7 +35,7 @@ where
 pub(crate) struct RelateNodeFactory;
 impl<F> NodeFactory<F> for RelateNodeFactory
 where
-    F: GeoFloat,
+    F: GeoNum,
 {
     type Node = (CoordNode<F>, EdgeEndBundleStar<F>);
     fn create_node(coordinate: Coordinate<F>) -> Self::Node {
@@ -45,7 +45,7 @@ where
 
 impl<'a, F> RelateOperation<'a, F>
 where
-    F: GeoFloat,
+    F: GeoNum,
 {
     pub(crate) fn new(
         geom_a: &'a GeometryCow<'a, F>,

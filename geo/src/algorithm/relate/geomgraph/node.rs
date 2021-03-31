@@ -1,16 +1,16 @@
 use super::{CoordPos, Dimensions, EdgeEnd, EdgeEndBundleStar, IntersectionMatrix, Label};
-use crate::{Coordinate, GeoFloat};
+use crate::{Coordinate, GeoNum};
 
 #[derive(Debug, Clone)]
 pub(crate) struct CoordNode<F>
 where
-    F: GeoFloat,
+    F: GeoNum,
 {
     coordinate: Coordinate<F>,
     label: Label,
 }
 
-impl<F: GeoFloat> CoordNode<F> {
+impl<F: GeoNum> CoordNode<F> {
     pub(crate) fn label(&self) -> &Label {
         &self.label
     }
@@ -26,7 +26,7 @@ impl<F: GeoFloat> CoordNode<F> {
 
 impl<F> CoordNode<F>
 where
-    F: GeoFloat,
+    F: GeoNum,
 {
     pub fn new(coordinate: Coordinate<F>) -> CoordNode<F> {
         CoordNode {

@@ -4,7 +4,7 @@ use super::{
 };
 
 use crate::algorithm::dimensions::HasDimensions;
-use crate::{Coordinate, GeoFloat, GeometryCow, Line, LineString, Point, Polygon};
+use crate::{Coordinate, GeoNum, GeometryCow, Line, LineString, Point, Polygon};
 
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -26,7 +26,7 @@ use std::rc::Rc;
 /// GeometryGraph is based on [JTS's `GeomGraph` as of 1.18.1](https://github.com/locationtech/jts/blob/jts-1.18.1/modules/core/src/main/java/org/locationtech/jts/geomgraph/GeometryGraph.java)
 pub(crate) struct GeometryGraph<'a, F>
 where
-    F: GeoFloat,
+    F: GeoNum,
 {
     arg_index: usize,
     parent_geometry: &'a GeometryCow<'a, F>,
@@ -40,7 +40,7 @@ where
 /// use composition and delegation to the same effect.
 impl<F> GeometryGraph<'_, F>
 where
-    F: GeoFloat,
+    F: GeoNum,
 {
     pub fn edges(&self) -> &[Rc<RefCell<Edge<F>>>] {
         self.planar_graph.edges()
@@ -65,7 +65,7 @@ where
 
 impl<'a, F> GeometryGraph<'a, F>
 where
-    F: GeoFloat,
+    F: GeoNum,
 {
     pub fn new(arg_index: usize, parent_geometry: &'a GeometryCow<F>) -> Self {
         let mut graph = GeometryGraph {

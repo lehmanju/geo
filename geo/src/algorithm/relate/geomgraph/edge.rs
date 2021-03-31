@@ -1,6 +1,6 @@
 use super::{Dimensions, Direction, EdgeIntersection, IntersectionMatrix, Label};
 use super::{LineIntersection, LineIntersector, RobustLineIntersector};
-use crate::{Coordinate, GeoFloat, Line};
+use crate::{Coordinate, GeoNum, Line};
 
 use std::collections::BTreeSet;
 
@@ -8,7 +8,7 @@ use std::collections::BTreeSet;
 ///
 /// This is based on [JTS's `Edge` as of 1.18.1](https://github.com/locationtech/jts/blob/jts-1.18.1/modules/core/src/main/java/org/locationtech/jts/geomgraph/Edge.java)
 #[derive(Debug)]
-pub(crate) struct Edge<F: GeoFloat> {
+pub(crate) struct Edge<F: GeoNum> {
     /// `coordinates` of the line geometry
     coords: Vec<Coordinate<F>>,
 
@@ -22,7 +22,7 @@ pub(crate) struct Edge<F: GeoFloat> {
     label: Label,
 }
 
-impl<F: GeoFloat> Edge<F> {
+impl<F: GeoNum> Edge<F> {
     /// Create a new Edge.
     ///
     /// - `coords` a *non-empty* Vec of Coordinates
@@ -114,7 +114,8 @@ impl<F: GeoFloat> Edge<F> {
         segment_index: usize,
     ) {
         let mut normalized_segment_index = segment_index;
-        let mut distance = RobustLineIntersector::compute_edge_distance(intersection_coord, line);
+        //let mut distance = RobustLineIntersector::compute_edge_distance(intersection_coord, line);
+        let mut distance = todo!("make generic");
 
         let next_segment_index = normalized_segment_index + 1;
 

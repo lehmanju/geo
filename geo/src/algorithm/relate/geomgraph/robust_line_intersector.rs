@@ -4,7 +4,7 @@ use crate::bounding_rect::BoundingRect;
 use crate::contains::Contains;
 use crate::intersects::Intersects;
 use crate::num_traits::Zero;
-use crate::{Coordinate, GeoFloat, Line, Rect};
+use crate::{Coordinate, GeoNum, Line, Rect};
 
 /// A robust version of [LineIntersector](traits.LineIntersector).
 #[derive(Clone)]
@@ -16,7 +16,7 @@ impl RobustLineIntersector {
     }
 }
 
-impl<F: GeoFloat> LineIntersector<F> for RobustLineIntersector {
+impl<F: GeoNum> LineIntersector<F> for RobustLineIntersector {
     fn compute_intersection(&mut self, p: Line<F>, q: Line<F>) -> Option<LineIntersection<F>> {
         crate::algorithm::line_intersection::line_intersection(p, q)
     }
@@ -39,36 +39,37 @@ impl RobustLineIntersector {
     /// My hypothesis is that the function is safe to use for points which are the
     /// result of _rounding_ points which lie on the line,
     /// but not safe to use for _truncated_ points.
-    pub fn compute_edge_distance<F: GeoFloat>(intersection: Coordinate<F>, line: Line<F>) -> F {
-        let dx = (line.end.x - line.start.x).abs();
-        let dy = (line.end.y - line.start.y).abs();
+    pub fn compute_edge_distance<F: GeoNum>(intersection: Coordinate<F>, line: Line<F>) -> F {
+        todo!("make generic");
+        // let dx = (line.end.x - line.start.x).abs();
+        // let dy = (line.end.y - line.start.y).abs();
 
-        let mut dist: F;
-        if intersection == line.start {
-            dist = F::zero();
-        } else if intersection == line.end {
-            if dx > dy {
-                dist = dx;
-            } else {
-                dist = dy;
-            }
-        } else {
-            let intersection_dx = (intersection.x - line.start.x).abs();
-            let intersection_dy = (intersection.y - line.start.y).abs();
-            if dx > dy {
-                dist = intersection_dx;
-            } else {
-                dist = intersection_dy;
-            }
-            // hack to ensure that non-endpoints always have a non-zero distance
-            if dist == F::zero() && intersection != line.start {
-                dist = intersection_dx.max(intersection_dy);
-            }
-        }
-        debug_assert!(
-            !(dist == F::zero() && intersection != line.start),
-            "Bad distance calculation"
-        );
-        dist
+        // let mut dist: F;
+        // if intersection == line.start {
+        //     dist = F::zero();
+        // } else if intersection == line.end {
+        //     if dx > dy {
+        //         dist = dx;
+        //     } else {
+        //         dist = dy;
+        //     }
+        // } else {
+        //     let intersection_dx = (intersection.x - line.start.x).abs();
+        //     let intersection_dy = (intersection.y - line.start.y).abs();
+        //     if dx > dy {
+        //         dist = intersection_dx;
+        //     } else {
+        //         dist = intersection_dy;
+        //     }
+        //     // hack to ensure that non-endpoints always have a non-zero distance
+        //     if dist == F::zero() && intersection != line.start {
+        //         dist = intersection_dx.max(intersection_dy);
+        //     }
+        // }
+        // debug_assert!(
+        //     !(dist == F::zero() && intersection != line.start),
+        //     "Bad distance calculation"
+        // );
+        // dist
     }
 }
