@@ -69,6 +69,18 @@ impl<T: CoordNum> From<Point<T>> for Coordinate<T> {
     }
 }
 
+impl<T: CoordNum> Into<(T, T)> for Coordinate<T> {
+    fn into(self) -> (T, T) {
+        (self.x, self.y)
+    }
+}
+
+impl<T: CoordNum> Into<[T; 2]> for Coordinate<T> {
+    fn into(self) -> [T; 2] {
+        [self.x, self.y]
+    }
+}
+
 impl<T> Coordinate<T>
 where
     T: CoordNum,
