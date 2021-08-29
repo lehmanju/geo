@@ -17,7 +17,7 @@ travis-ci = { repository = "georust/geo" }
 [dependencies]
 num-traits = "0.2"
 serde = { version = "1.0", optional = true, features = ["derive"] }
-rstar = { git = "https://github.com/lehmanju/rstar", branch = "selremove" }
+rstar = { git = "https://github.com/lehmanju/rstar" }
 geographiclib-rs = { version = "0.2" }
 log = "0.4.11"
 
