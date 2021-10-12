@@ -15,6 +15,7 @@ edition = "2018"
 travis-ci = { repository = "georust/geo" }
 
 [dependencies]
+aatree = { git = "https://github.com/msrd0/aatree" }
 num-traits = "0.2"
 serde = { version = "1.0", optional = true, features = ["derive"] }
 rstar = { version = "0.8" }

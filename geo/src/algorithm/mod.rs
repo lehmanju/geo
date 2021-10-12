@@ -86,3 +86,6 @@ pub mod vincenty_distance;
 pub mod vincenty_length;
 /// Calculate and work with the winding order of `Linestring`s.
 pub mod winding_order;
+
+/// Sweepline algorithm to calculate line segment intersections.
+pub mod sweepline;
