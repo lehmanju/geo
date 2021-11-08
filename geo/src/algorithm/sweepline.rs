@@ -4,7 +4,7 @@ use crate::{
 };
 use aatree::AATreeMap;
 use core::fmt::{self, Debug};
-use geo_types::{CoordFloat, Line};
+use geo_types::{CoordFloat, Coordinate, Line};
 use std::{cmp::Ordering, collections::HashMap, fmt::Display};
 
 struct StoppingPoint<'a, S, T> {
@@ -24,8 +24,13 @@ struct LineStatus<'a, S, T: Debug + CoordFloat> {
     intersection_point: Option<(Float<T>, &'a S)>,
 }
 
-struct Status<'a, S, T: Debug + CoordFloat> {
-    segments: Vec<LineStatus<'a, S, T>>,
+/// Segment in a status list
+enum SegmentStatus<'a, S> {
+    /// Single segment at a particular status list position
+    Single(&'a S),
+    /// Multiple segments at the same status list position
+    /// All segments have the same slope which means they have the same intersection points with other segments but only different end points.
+    Multi(Vec<&'a S>),
 }
 
 impl<T> StoppingPoint<'_, Line<T>, T>
@@ -81,7 +86,7 @@ impl<T: CoordFloat + Display> Display for Float<T> {
     }
 }
 
-pub fn sweepline<'a, I, F, T>(segments: I) -> Vec<(&'a Line<T>, &'a Line<T>, T)>
+pub fn sweepline<'a, I, F, T>(segments: I) -> Vec<(&'a Line<T>, &'a Line<T>, Coordinate<T>)>
 where
     I: IntoIterator<Item = &'a Line<T>>,
     T: CoordFloat + Display + 'a + HasKernel,
